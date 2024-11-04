@@ -6,7 +6,6 @@ using Scripts.Enums;
 using UniRx;
 using Units;
 using UnityEngine;
-using Zenject;
 
 namespace Health
 {
@@ -61,7 +60,9 @@ namespace Health
             IsAlive.Value = false;
             _animator.SetTrigger(EAnimationType.Die);
             CurrentHealth.Value = 0;
-            // _colliderSize.size = new Vector2(0.3F,0.3F); //TODO collider size?
+
+            CapsuleCollider2D colliderSize = _controller.GetComponent<CapsuleCollider2D>();
+            colliderSize.size = new Vector2(0.3F,0.3F);
         }
 
         public abstract void OnDeath();

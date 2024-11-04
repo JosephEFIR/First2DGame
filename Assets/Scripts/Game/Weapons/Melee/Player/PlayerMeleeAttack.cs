@@ -28,6 +28,7 @@ namespace  Scripts.Weapons.Melee
             _audioService = GetComponent<LocalAudioService>();
             _animator = GetComponent<CustomAnimator>();
             PlayerController _player = GetComponent<PlayerController>();
+            
             _config = _player.Config;
         }
 

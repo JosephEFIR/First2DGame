@@ -64,7 +64,6 @@ namespace Scripts.Player
                 }
                 else
                 {
-                    _animator.SetBool(EAnimationType.Landing, false);
                     if (Input.GetKey(KeyCode.Space))
                     {
                         BallMode();
@@ -81,13 +80,12 @@ namespace Scripts.Player
             }
             if (_groundCheck.IsGround == false)
             {
-                if (_ballModeTrigger.TriggerOn)//TODO FIX THIS ON 1.6
+                if (_ballModeTrigger.TriggerOn)
                 {
                     BallMode();
                 }
                 else
                 {
-                    _animator.SetBool(EAnimationType.Landing, true);
                     if (Input.GetKey(KeyCode.Space))
                     {
                         BallMode();
