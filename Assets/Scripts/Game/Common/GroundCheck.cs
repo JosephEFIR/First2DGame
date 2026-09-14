@@ -6,18 +6,16 @@ namespace Scripts.Player
     public class GroundCheck : MonoBehaviour
     {
         private bool _isGround;
-        private LocalAudioService _audioService;
         private Rigidbody2D _rigidbody2D;
 
         private void Awake()
         {
-            _audioService = GetComponentInParent<LocalAudioService>();
             _rigidbody2D = GetComponentInParent<Rigidbody2D>();
         }
 
         private void OnTriggerEnter2D(Collider2D collider)
         {
-            if (collider.gameObject.tag == "Ground" & _rigidbody2D.velocity.y <= 0)
+            if (collider.gameObject.CompareTag("Ground") & _rigidbody2D.linearVelocity.y <= 0)
             {
                 _isGround = true;
             }
@@ -25,7 +23,7 @@ namespace Scripts.Player
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (collision.gameObject.tag == "Ground")
+            if (collision.gameObject.CompareTag("Ground"))
             {
                 _isGround = false;
             }

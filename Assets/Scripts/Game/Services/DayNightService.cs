@@ -1,6 +1,4 @@
 using DG.Tweening;
-using Scripts.Audio;
-using Scripts.Enums;
 using UnityEngine;
 
 namespace Scripts.Services
@@ -44,16 +42,11 @@ namespace Scripts.Services
         private void DayCycle()
         {
             transform.DOMove(_nightPoint.position, 200);
-            
-            GlobalAudioService.Instance.Play(EClipType.Forest);
         }
 
         private void NightCycle()
         {
             transform.DOMove(_dayPoint.position, 200);
-            
-            GlobalAudioService.Instance.Play(EClipType.Music);
-            GlobalAudioService.Instance.Stop(EClipType.Forest);
         }
     }
 }

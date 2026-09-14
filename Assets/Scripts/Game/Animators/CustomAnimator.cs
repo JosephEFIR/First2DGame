@@ -3,14 +3,13 @@ using UnityEngine;
 
 namespace Scripts.Animators
 {
-    [RequireComponent(typeof(Animator))]
-    public class CustomAnimator : MonoBehaviour
+    public class CustomAnimator
     {
         private Animator _animator;
 
-        private void Awake()
+        public void Init(Animator animator)
         {
-            _animator = GetComponent<Animator>();
+            _animator = animator;
         }
 
         public void SetTrigger(EAnimationType type)

@@ -6,7 +6,7 @@ namespace Scripts.Health
     {
         public override void OnDeath()
         {
-            gameObject.SetActive(false);
+            _view.gameObject.SetActive(false);
         }
     }
 }

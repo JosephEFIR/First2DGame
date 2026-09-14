@@ -1,22 +1,19 @@
-using Audio;
 using Scripts.Animators;
 using Scripts.Configs;
 using Scripts.Enums;
 using Scripts.TriggerScripts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Scripts.Player
 {
-    public class PlayerMoveController : MonoBehaviour 
+    public class PlayerMoveController
     {
-        [SerializeField] private bool _blockPlayer;
-        [SerializeField] private GroundCheck _groundCheck;
-        [SerializeField] private BallModeTrigger _ballModeTrigger;
+        private bool _blockPlayer; 
+        private GroundCheck _groundCheck;
+        private BallModeTrigger _ballModeTrigger;
         
         private Rigidbody2D _rigidbody2D;
         private CustomAnimator _animator;
-        private LocalAudioService _audioService;
         private CapsuleCollider2D _colliderSize;
 
         private float _horizontalAxis;
@@ -25,29 +22,26 @@ namespace Scripts.Player
         private Vector2 _defaultColliderSize;
 
         private UnitConfig _config;
+        private Transform _transform;
         private float _speed;
         private float _jumpForce;
-
-        private void Awake()
+        
+        public void Init(PlayerModel model)
         {
-            PlayerController player = GetComponent<PlayerController>();
-            _config = player.Config;
+            _config = model.Config;
+            _transform = model.Transform;
+            _animator = model.Animator;
+            _rigidbody2D = model.Rigidbody;
+            _colliderSize = model.Collider;
+            _ballModeTrigger = model.BallModeTrigger;
+            _groundCheck = model.GroundCheck;
             
-            _animator = GetComponent<CustomAnimator>();
-            _rigidbody2D = GetComponent<Rigidbody2D>();
-            _audioService = GetComponent<LocalAudioService>();
-            _colliderSize = GetComponent<CapsuleCollider2D>();
-            
-        }
-
-        private void Start()
-        {
             _defaultColliderSize = _colliderSize.size;
             _speed = _config.UnitStats[EUnitStat.Speed];
             _jumpForce = _config.UnitStats[EUnitStat.JumpForce];
         }
 
-        private void Update()
+        public void Run()
         {
             if (_blockPlayer)
             {
@@ -58,7 +52,7 @@ namespace Scripts.Player
             if (_groundCheck.IsGround)
             {
                     
-                if (_ballModeTrigger.TriggerOn)//TODO FIX THIS ON 1.6
+                if (_ballModeTrigger.TriggerOn)
                 {
                     BallMode();
                 }
@@ -102,30 +96,29 @@ namespace Scripts.Player
         
         private void Move()
         {
-            _animator.SetMoveSpeed(_rigidbody2D.velocity.magnitude);
+            _animator.SetMoveSpeed(_rigidbody2D.linearVelocity.magnitude);
             _animator.SetBool(EAnimationType.BallMode, false); //TODO FIX THIS
             
-            _rigidbody2D.velocity = new Vector2(_horizontalAxis * _speed, _rigidbody2D.velocity.y);
+            _rigidbody2D.linearVelocity = new Vector2(_horizontalAxis * _speed, _rigidbody2D.linearVelocity.y);
             _colliderSize.size = new Vector2(_defaultColliderSize.x, _defaultColliderSize.y);
         }
         private void BallMode()
         {
             _animator.SetBool(EAnimationType.BallMode ,true);
             
-            _rigidbody2D.velocity = new Vector2(_horizontalAxis * _speed * 1.5F, _rigidbody2D.velocity.y);
+            _rigidbody2D.linearVelocity = new Vector2(_horizontalAxis * _speed * 1.5F, _rigidbody2D.linearVelocity.y);
             _colliderSize.size = new Vector2(0.45F, 0.35F); //TODO HARD CODE
         }
         
         private void Jump()
         {
-            _audioService.Play(EClipType.Jump);
             _animator.SetTrigger(EAnimationType.Jump);
             _rigidbody2D.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
         }
         
         private void Landing()
         {
-            if (_rigidbody2D.velocity.y < -.1f)
+            if (_rigidbody2D.linearVelocity.y < -.1f)
             {
                 _animator.SetTrigger(EAnimationType.Landing);
             }
@@ -141,15 +134,10 @@ namespace Scripts.Player
             if (_isFacingRight && _horizontalAxis < 0f || !_isFacingRight && _horizontalAxis > 0f)
             {
                 _isFacingRight = !_isFacingRight;
-                Vector3 localScale = transform.localScale;
+                Vector3 localScale = _transform.localScale;
                 localScale.x *= -1f;
-                transform.localScale = localScale;
+                _transform.localScale = localScale;
             }
-        }
-
-        private void OnWalking()
-        {
-            _audioService.PlayPitch(EClipType.Walk,Random.Range(1,2));
         }
     }
 }

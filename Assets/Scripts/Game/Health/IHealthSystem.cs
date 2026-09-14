@@ -5,5 +5,6 @@
         public void AddHealth(int value);
         public void GetDamage(int value);
         public void Death();
+        public void OnDeath();
     }
 }

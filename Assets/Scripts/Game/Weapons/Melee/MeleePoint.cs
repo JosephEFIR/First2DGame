@@ -6,36 +6,24 @@ namespace Scripts.Weapons.Melee
     public class MeleePoint : MonoBehaviour
     {
         public bool CanAttack { get; private set; }
+        public IHealthSystem HealthEntered;
         
-        private IHealthSystem _unitHealth;
-        public IHealthSystem EnemyHealth;
-
-        private void Awake()
-        {
-            _unitHealth = GetComponentInParent<IHealthSystem>();
-        }
 
         private void OnTriggerEnter2D(Collider2D collider2D)
         {
-            if (collider2D.TryGetComponent(out IHealthSystem enemyHealth))
+            if (collider2D.TryGetComponent(out IHealthSystem health))
             {
-                EnemyHealth = enemyHealth;
-                if (EnemyHealth!= _unitHealth)
-                {
-                    CanAttack = true;
-                }
+                HealthEntered = health;
+                CanAttack = true;
             }
         }
         
         private void OnTriggerExit2D(Collider2D collider2D)
         {
-            if (collider2D.TryGetComponent(out IHealthSystem enemyHealth))
+            if (collider2D.TryGetComponent(out IHealthSystem health))
             {
-                EnemyHealth = enemyHealth;
-                if (EnemyHealth!= _unitHealth)
-                {
-                    CanAttack = false;
-                }
+                HealthEntered = null;
+                CanAttack = false;
             }
         }
     }

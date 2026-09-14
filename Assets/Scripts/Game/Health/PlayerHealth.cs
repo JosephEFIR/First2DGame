@@ -3,7 +3,6 @@ using Scripts.Managers;
 using Scripts.UI;
 using Zenject;
 
-
 namespace Scripts.Health
 {
     public sealed class PlayerHealth : HealthComponent

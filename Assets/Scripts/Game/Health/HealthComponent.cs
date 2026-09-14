@@ -3,36 +3,31 @@ using Assets.Scripts.Interfaces;
 using Scripts.Animators;
 using Scripts.Configs;
 using Scripts.Enums;
+using Scripts.Units;
 using UniRx;
 using Units;
 using UnityEngine;
 
 namespace Health
 {
-    [RequireComponent(typeof(CustomAnimator))]
     public abstract class HealthComponent : MonoBehaviour,IHealthSystem
     {
-        private UnitConfig _config;
-        private UnitController _controller;
+        protected UnitConfig _config;
+        protected CapsuleCollider2D _collider;
+        protected UnitView _view;
 
-        private CustomAnimator _animator;
+        protected CustomAnimator _animator;
 
         public readonly ReactiveProperty<int> CurrentHealth = new();
         public readonly ReactiveProperty<int> MaxHealth = new();
         public readonly ReactiveProperty<bool> IsAlive = new();
-
-        private CompositeDisposable _disposable = new();
-
-        private void Awake()
+        
+        public void Init(UnitModel model)
         {
-            _controller = GetComponent<UnitController>();
-            _animator = GetComponent<CustomAnimator>();
-            _config = _controller.Config;
-        }
-
-
-        private void Start()
-        {
+            _view = model.View;
+            _config = model.Config;
+            _collider = model.Collider;
+            _animator = model.Animator; 
             IsAlive.Value = true;
             MaxHealth.Value = _config.UnitStats[EUnitStat.Health];
             CurrentHealth.Value = MaxHealth.Value;
@@ -60,16 +55,11 @@ namespace Health
             IsAlive.Value = false;
             _animator.SetTrigger(EAnimationType.Die);
             CurrentHealth.Value = 0;
-
-            CapsuleCollider2D colliderSize = _controller.GetComponent<CapsuleCollider2D>();
-            colliderSize.size = new Vector2(0.3F,0.3F);
+            
+            _collider.size = new Vector2(0.3F,0.3F);
+            OnDeath();
         }
 
-        public abstract void OnDeath();
-
-        private void OnDestroy()
-        {
-            _disposable?.Clear();
-        }
+        public virtual void OnDeath(){}
     }
 }

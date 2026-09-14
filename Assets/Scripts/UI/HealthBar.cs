@@ -1,4 +1,4 @@
-using Scripts.Health;
+using Health;
 using Scripts.Player;
 using UniRx;
 using UnityEngine;
@@ -9,16 +9,16 @@ namespace Scripts.UI
 {
     public class HealthBar : MonoBehaviour
     {
-        [Inject] private PlayerController _playerController;
+        [Inject] private PlayerView _playerView;
         
         [SerializeField] private Slider _slider;
-        private PlayerHealth _playerHealth;
+        private HealthComponent _playerHealth;
 
         private CompositeDisposable _disposable = new();
         
         private void Awake()
         {
-            _playerHealth = _playerController.GetComponent<PlayerHealth>();
+            _playerHealth = _playerView.GetComponent<PlayerInit>().Model.HealthComponent;
         }
 
         private void Start()

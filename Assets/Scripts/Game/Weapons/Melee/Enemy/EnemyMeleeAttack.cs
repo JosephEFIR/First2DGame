@@ -1,41 +1,35 @@
-﻿using Audio;
+﻿using Game.Units.Enemies;
 using Scripts.Animators;
 using Scripts.Configs;
 using Scripts.Enemies;
 using Scripts.Enums;
-using Units.Enemies;
-using UnityEngine;
+using Scripts.Health;
+using Scripts.Player;
 
 namespace Scripts.Weapons.Melee
 {
-    public class EnemyMeleeAttack : MonoBehaviour
+    public class EnemyMeleeAttack : IAttack
     {
-        [SerializeField] private MeleePoint _meleePoint;
-
-        private LocalAudioService _audioService;
+        private MeleePoint _meleePoint;
+        
         private CustomAnimator _animator;
-        private EnemyAI _enemyAI;
+        private EnemyAIController _enemyAIController;
         private UnitConfig _config;
 
         private int _damage;
-        
-        private void Awake()
-        {
-            _audioService = GetComponent<LocalAudioService>();
-            EnemyController enemyController = GetComponent<EnemyController>();
-            _animator = GetComponent<CustomAnimator>();
-            _enemyAI = GetComponent<EnemyAI>();
-            _config = enemyController.Config;
-        }
 
-        private void Start()
+        public void Init(EnemyModel model)
         {
+            _config = model.Config;
+            _meleePoint = model.MeleePoint;
+            _enemyAIController = model.AI_Controller;
+            _animator = model.Animator;
             _damage = _config.UnitStats[EUnitStat.Damage];
         }
 
-        private void Update()
+        public void Run()
         {
-            if (_meleePoint.CanAttack)
+            if (_meleePoint.CanAttack && _meleePoint.HealthEntered is PlayerHealth)
             {
                 Attack();
             }
@@ -43,19 +37,17 @@ namespace Scripts.Weapons.Melee
 
         private void Attack()
         {
-            _enemyAI.Stay(true);
-            _audioService.Play(EClipType.Swing);
+            _enemyAIController.Stay(true);
             _animator.SetTrigger(EAnimationType.Attack); 
         }
         
-        private void OnAttack()
+        public void OnAttack()
         {
-            if (_meleePoint.CanAttack & _meleePoint.EnemyHealth != null)
+            if (_meleePoint.CanAttack & _meleePoint.HealthEntered != null)
             {
-                _audioService.Play(EClipType.Punch);
-                _meleePoint.EnemyHealth.GetDamage(_damage);
+                _meleePoint.HealthEntered.GetDamage(_damage);
             }
-            _enemyAI.Stay(false);
+            _enemyAIController.Stay(false);
             _animator.SetTrigger(EAnimationType.Idle);
         }
     } 
